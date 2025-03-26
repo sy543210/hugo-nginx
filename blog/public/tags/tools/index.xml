@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Tools on yysog&#39;s blog</title>
+    <link>http://yysog.com/tags/tools/</link>
+    <description>Recent content in Tools on yysog&#39;s blog</description>
+    <image>
+      <title>yysog&#39;s blog</title>
+      <url>http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- 0.136.5</generator>
+    <language>zh</language>
+    <lastBuildDate>Fri, 11 Oct 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://yysog.com/tags/tools/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>FFmpeg的基本使用</title>
+      <link>http://yysog.com/posts/ffmpeg%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Fri, 11 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://yysog.com/posts/ffmpeg%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://ffmpeg.org/ffmpeg.html&#34;&gt;文档&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;ffmpeg&#34;&gt;FFmpeg&lt;/h1&gt;
+&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+&lt;p&gt;ffmpeg 是一款通用的媒体转换器。它能读取各种输入（包括实时抓取/录制设备），并将其过滤和转码为大量输出格式。&lt;/p&gt;
+&lt;h2 id=&#34;转码程序工作图&#34;&gt;转码程序工作图&lt;/h2&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;../../img/posts/image-20240519170946267.png&#34; alt=&#34;&#34;  /&gt;
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;muxer：即多路复用器，主要用于将音频流、视频流、字幕流等不同的数据流进行混合，生成一个包含所有信息的单一数据流。如mp4等格式&lt;/li&gt;
+&lt;li&gt;demuxer：对视频进行解封装&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;工具&#34;&gt;工具&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;ffmpeg：主程序&lt;/li&gt;
+&lt;li&gt;ffplay：简单的音视频查看工具&lt;/li&gt;
+&lt;li&gt;ffprobe：查看音视频信息工具&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;示例&#34;&gt;示例&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;查看文件信息：&lt;code&gt;ffmpeg -i demo.mp4&lt;/code&gt;或&lt;code&gt;ffprobe demo.mp4&lt;/code&gt;，添加&lt;code&gt;-hide_banner&lt;/code&gt;可以隐藏版本，配置参数等信息&lt;/li&gt;
+&lt;li&gt;转换文件格式：&lt;code&gt;ffmpeg -i demo.mp4 demo.mov&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;获取一张视频截图：&lt;code&gt;ffmpeg -i demo.mp4 -ss 00:00:01 -f image2 -vframes 1 out.jpg&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;视频添加水印：`ffmpeg -i demo.mp4 -i logo.png -filter_complex &amp;ldquo;overlay=x:y out.mp4&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;视频去除水印：&lt;code&gt;ffmpeg -i demo.mp4 -vf &amp;quot;delogo=x=xxx:y=xxx:w=xxx:h=xxx:show=0&amp;quot; -c:a copy out.mp4&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;更改视频分辨率：&lt;code&gt;ffmpeg -i demo.mp4 -vf scale=-1:720&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;删除视频中的音频：&lt;code&gt;ffmpeg -i demo.mp4 -an out.mp4&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;视频转gif图：&lt;code&gt;ffmpeg -i demo.mp4 -ss 00:00:30 -t3 -vf &amp;quot;fps=24,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse&amp;quot; test.gif&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/673522888&#34;&gt;知乎：FFMPEG详解(完整版）&lt;/a&gt;&lt;br&gt;
+&lt;a href=&#34;https://www.bilibili.com/video/BV1bu4y1n78A/&#34;&gt;B站：FFmpeg 速成教学&lt;/a&gt;&lt;br&gt;
+&lt;a href=&#34;https://blog.csdn.net/qq284489030/article/details/134683655&#34;&gt;视频转gif图&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

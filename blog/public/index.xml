@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>yysog&#39;s blog</title>
+    <link>http://yysog.com/</link>
+    <description>Recent content on yysog&#39;s blog</description>
+    <image>
+      <title>yysog&#39;s blog</title>
+      <url>http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- 0.136.5</generator>
+    <language>zh</language>
+    <lastBuildDate>Fri, 11 Oct 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://yysog.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>FFmpeg的基本使用</title>
+      <link>http://yysog.com/posts/ffmpeg%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Fri, 11 Oct 2024 00:00:00 +0000</pubDate>
+      <guid>http://yysog.com/posts/ffmpeg%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://ffmpeg.org/ffmpeg.html&#34;&gt;文档&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;ffmpeg&#34;&gt;FFmpeg&lt;/h1&gt;
+&lt;h2 id=&#34;介绍&#34;&gt;介绍&lt;/h2&gt;
+&lt;p&gt;ffmpeg 是一款通用的媒体转换器。它能读取各种输入（包括实时抓取/录制设备），并将其过滤和转码为大量输出格式。&lt;/p&gt;
+&lt;h2 id=&#34;转码程序工作图&#34;&gt;转码程序工作图&lt;/h2&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;../../img/posts/image-20240519170946267.png&#34; alt=&#34;&#34;  /&gt;
+&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;muxer：即多路复用器，主要用于将音频流、视频流、字幕流等不同的数据流进行混合，生成一个包含所有信息的单一数据流。如mp4等格式&lt;/li&gt;
+&lt;li&gt;demuxer：对视频进行解封装&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;工具&#34;&gt;工具&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;ffmpeg：主程序&lt;/li&gt;
+&lt;li&gt;ffplay：简单的音视频查看工具&lt;/li&gt;
+&lt;li&gt;ffprobe：查看音视频信息工具&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;示例&#34;&gt;示例&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;查看文件信息：&lt;code&gt;ffmpeg -i demo.mp4&lt;/code&gt;或&lt;code&gt;ffprobe demo.mp4&lt;/code&gt;，添加&lt;code&gt;-hide_banner&lt;/code&gt;可以隐藏版本，配置参数等信息&lt;/li&gt;
+&lt;li&gt;转换文件格式：&lt;code&gt;ffmpeg -i demo.mp4 demo.mov&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;获取一张视频截图：&lt;code&gt;ffmpeg -i demo.mp4 -ss 00:00:01 -f image2 -vframes 1 out.jpg&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;视频添加水印：`ffmpeg -i demo.mp4 -i logo.png -filter_complex &amp;ldquo;overlay=x:y out.mp4&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;视频去除水印：&lt;code&gt;ffmpeg -i demo.mp4 -vf &amp;quot;delogo=x=xxx:y=xxx:w=xxx:h=xxx:show=0&amp;quot; -c:a copy out.mp4&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;更改视频分辨率：&lt;code&gt;ffmpeg -i demo.mp4 -vf scale=-1:720&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;删除视频中的音频：&lt;code&gt;ffmpeg -i demo.mp4 -an out.mp4&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;视频转gif图：&lt;code&gt;ffmpeg -i demo.mp4 -ss 00:00:30 -t3 -vf &amp;quot;fps=24,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse&amp;quot; test.gif&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;参考&#34;&gt;参考&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/673522888&#34;&gt;知乎：FFMPEG详解(完整版）&lt;/a&gt;&lt;br&gt;
+&lt;a href=&#34;https://www.bilibili.com/video/BV1bu4y1n78A/&#34;&gt;B站：FFmpeg 速成教学&lt;/a&gt;&lt;br&gt;
+&lt;a href=&#34;https://blog.csdn.net/qq284489030/article/details/134683655&#34;&gt;视频转gif图&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>linux通过网桥将多网口主机当交换机</title>
+      <link>http://yysog.com/posts/linux%E7%BD%91%E6%A1%A5%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Thu, 12 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://yysog.com/posts/linux%E7%BD%91%E6%A1%A5%E9%85%8D%E7%BD%AE/</guid>
+      <description>&lt;p&gt;在 Arch Linux 中将多网口主机配置为交换机可以通过创建一个网桥来实现&lt;/p&gt;
+&lt;h3 id=&#34;步骤-1安装必要的工具&#34;&gt;步骤 1：安装必要的工具&lt;/h3&gt;
+&lt;p&gt;确保系统上已安装 &lt;code&gt;bridge-utils&lt;/code&gt;，通常情况下它默认包含在 Arch Linux 中。如果没有，可以使用以下命令安装它：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo pacman -S bridge-utils
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;步骤-2创建网桥&#34;&gt;步骤 2：创建网桥&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;编辑网络配置文件&lt;/strong&gt;：在 Arch Linux 中，可以使用 &lt;code&gt;systemd&lt;/code&gt; 的网络配置方法或 &lt;code&gt;netctl&lt;/code&gt;。这里我们将使用 &lt;code&gt;systemd-networkd&lt;/code&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;创建网桥配置文件，例如 &lt;code&gt;/etc/systemd/network/10-br0.netdev&lt;/code&gt;：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-init&#34; data-lang=&#34;init&#34;&gt;[NetDev]
+Name=br0
+Kind=bridge
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;添加物理接口到网桥&lt;/strong&gt;：例如，假设有两个接口：&lt;code&gt;eth0&lt;/code&gt; 和 &lt;code&gt;eth1&lt;/code&gt;。需要分别为这些接口创建配置文件，例如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/etc/systemd/network/20-eth0.network&lt;/code&gt;：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-init&#34; data-lang=&#34;init&#34;&gt;[Match]
+Name=eth0
+
+[Network]
+Bridge=br0
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/etc/systemd/network/20-eth1.network&lt;/code&gt;：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-init&#34; data-lang=&#34;init&#34;&gt;[Match]
+Name=eth1
+
+[Network]
+Bridge=br0
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;配置网桥的IP地址&lt;/strong&gt;：如果网桥需要获取一个静态IP地址，可以创建另一个配置文件，例如 &lt;code&gt;/etc/systemd/network/30-br0.network&lt;/code&gt;：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-init&#34; data-lang=&#34;init&#34;&gt;[Match]
+Name=br0
+
+[Network]
+Address=192.168.1.100/24  # 请根据的网络环境调整
+Gateway=192.168.1.1
+DNS=8.8.8.8
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果想要使用 DHCP，可以设置：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-init&#34; data-lang=&#34;init&#34;&gt;[Match]
+Name=br0
+
+[Network]
+DHCP=yes
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;步骤-3启用并启动-systemd-networkd&#34;&gt;步骤 3：启用并启动 &lt;code&gt;systemd-networkd&lt;/code&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;启用 &lt;code&gt;systemd-networkd&lt;/code&gt; 服务：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo systemctl &lt;span class=&#34;nb&#34;&gt;enable&lt;/span&gt; systemd-networkd
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo systemctl start systemd-networkd
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;启用和启动 &lt;code&gt;systemd-resolved&lt;/code&gt; 服务（如果使用 DNS）：&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>linux笔记</title>
+      <link>http://yysog.com/posts/linux%E7%AC%94%E8%AE%B0/</link>
+      <pubDate>Sun, 01 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://yysog.com/posts/linux%E7%AC%94%E8%AE%B0/</guid>
+      <description>&lt;h1 id=&#34;linux笔记&#34;&gt;linux笔记&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.runoob.com/linux/linux-tutorial.html&#34;&gt;Linux 教程 | 菜鸟教程 (runoob.com)&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;1-字符图形界面&#34;&gt;1. 字符/图形界面&lt;/h2&gt;
+&lt;h3 id=&#34;1-字符图形界面的切换&#34;&gt;1. 字符/图形界面的切换&lt;/h3&gt;
+&lt;p&gt;计算机启动后默认进入图形界面登陆，若在进入字符界面，在图形登录界面使用Ctrl+Alt+F3;&lt;br&gt;
+若需从字符界面返回图形界面，使用Ctrl+Alt+F1&lt;/p&gt;
+&lt;h3 id=&#34;2-查看修改默认登陆界面&#34;&gt;2. 查看/修改默认登陆界面&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;查看默认登陆界面：&lt;code&gt;systemctl get-default&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;修改默认登陆界面：&lt;code&gt;sudo systemctl set-default [登陆状态]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;登陆状态：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;graphical.target&lt;/code&gt; 表示图形界面&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;multi-user.target&lt;/code&gt; 表示字符界面&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;3-字符界面关闭和重启需要root权限&#34;&gt;3. 字符界面关闭和重启(需要root权限)&lt;/h3&gt;
+&lt;h4 id=&#34;1-shutdownhttpswwwrunoobcomlinuxlinux-comm-shutdownhtml&#34;&gt;1. &lt;a href=&#34;https://www.runoob.com/linux/linux-comm-shutdown.html&#34;&gt;shutdown&lt;/a&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;命令格式：&lt;code&gt;shutdown [选项] [时间] [警告信息]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;最常用： &lt;code&gt;$ sudo shutdown(一分钟后关机)&lt;/code&gt;&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th style=&#34;text-align: center&#34;&gt;选项&lt;/th&gt;
+          &lt;th style=&#34;text-align: center&#34;&gt;选项含义&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: center&#34;&gt;-k&lt;/td&gt;
+          &lt;td style=&#34;text-align: center&#34;&gt;并不会关机，只发出警告信息给所有用户&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: center&#34;&gt;-r&lt;/td&gt;
+          &lt;td style=&#34;text-align: center&#34;&gt;重新启动系统&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: center&#34;&gt;-h&lt;/td&gt;
+          &lt;td style=&#34;text-align: center&#34;&gt;关闭系统&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: center&#34;&gt;-c&lt;/td&gt;
+          &lt;td style=&#34;text-align: center&#34;&gt;取消运行shutdown&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;例：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;发出关机警告信息，并不会关机：&lt;code&gt;$sudo shutdown -k&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;立即关机：&lt;code&gt;$sudo shutdown –h now&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;45分钟后关闭计算机：&lt;code&gt;$sudo shutdown –h +45&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;重启计算机并发出警告：&lt;code&gt;$sudo shutdown –r now &amp;quot;system will be reboot now.&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;定时在1点38分重启计算机：&lt;code&gt;$sudo shutdown –r 01:38&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;2-halthttpswwwrunoobcomlinuxlinux-comm-halthtml&#34;&gt;2. &lt;a href=&#34;https://www.runoob.com/linux/linux-comm-halt.html&#34;&gt;halt&lt;/a&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;命令格式：&lt;code&gt;halt [选项]&lt;/code&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>hugo&#43;Nginx本地部署</title>
+      <link>http://yysog.com/posts/hugo&#43;nginx%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2/</link>
+      <pubDate>Thu, 29 Aug 2024 00:00:00 +0000</pubDate>
+      <guid>http://yysog.com/posts/hugo&#43;nginx%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2/</guid>
+      <description>&lt;p&gt;最近想把之前写的markdown笔记部署起来搭个博客，主要有下面两方面考虑：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;便于多端访问：之前都用smb共享，但在移动端体验一般。&lt;/li&gt;
+&lt;li&gt;便于格式的统一&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;考虑到之后可能会将之些笔记部署的云上或github上，为了方便迁移，选择静态博客生成工具&lt;a href=&#34;https://gohugo.io/&#34;&gt;hugo&lt;/a&gt;.大多数教程的部署方案都是使用github action，但考虑到github正常访问速度等问题，故pass。&lt;/p&gt;
+&lt;p&gt;由于手头有一台闲置的笔记本，目前用来当一个简单的服务器用，像一些smb，alist，ql等乱七八糟的内容都挂在上面。现在想把博客也挂上去，主要在局域网内访问，在外面需要的话也可以用内网穿透服务临时用一下。&lt;/p&gt;
+&lt;h2 id=&#34;需求&#34;&gt;需求&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;移植性好，以便日后可能的平台迁移(静态生成工具移植都方便)&lt;/li&gt;
+&lt;li&gt;尽量降低对markdown编写侵入，编写完后自动化构建&lt;/li&gt;
+&lt;li&gt;可以在不同应用编辑Markdown文档(主要是图片路径问题)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;方案&#34;&gt;方案&lt;/h2&gt;
+&lt;p&gt;自动化构建思路主要就两种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;hugo server + nginx反向代理&lt;/li&gt;
+&lt;li&gt;inotifywait + 脚本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;最开始本想通过直接通过第一种来实现。但后来发现有些应用(obsidian，还&lt;a href=&#34;https://forum.obsidian.md/t/disable-auto-save-or-change-frequency/14230/35&#34;&gt;无法关闭&lt;/a&gt;)在写markdown的时候会自动保存文档，而且频率相当高。这就导致用hugo server后需要经常性的编译写好的文档，对性能影响较大，没办法就只能用inotifywait写脚本监听文件变化了。&lt;/p&gt;
+&lt;p&gt;流程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;创建一个文件deploy.md，用于inofitywait监控&lt;/li&gt;
+&lt;li&gt;当编写完markdown后，能过修改文件deploy.md触发事件&lt;/li&gt;
+&lt;li&gt;inotiywait收到事件后执行脚本编译，并将编译后的文件同步到nginx&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;具体过程&#34;&gt;具体过程&lt;/h3&gt;
+&lt;p&gt;使用&lt;a href=&#34;https://man.archlinux.org/man/inotifywait.1&#34;&gt;inofitywait&lt;/a&gt;先安装&lt;code&gt;inotify-tools&lt;/code&gt;包：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;sudo pacman -S inotify-tools&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;对于文件deploy.md，并没有啥要求。之所有选择md文件，主要是由于大部分markdown软件默认只显示md文件。inofitywait选择监控close_write事件，当想要发布内容时只需要随便改动一下文件保存即可。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;推荐放一个复选框&lt;code&gt;- [ ] trigger&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;监测deploy.md事件脚本(deployer.sh)：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;flagPath&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;/path/to/you/deploy.md&amp;#34;&lt;/span&gt;   &lt;span class=&#34;c1&#34;&gt;# 参考：${HOME}/share/hugo/deploy.md&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;deployerPath&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;/path/to/your/hugo/site&amp;#34;&lt;/span&gt;   &lt;span class=&#34;c1&#34;&gt;# 参考：${HOME}/projects/hugo/blog&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;nginxPath&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;/path/to/your/nginx/html/&amp;#34;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;# 参考: ${HOME}/projects/docker/nginx/html/&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;sleepTime&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;# 触发构建后10s之后才能再次构建&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; true&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;nv&#34;&gt;file&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;inotifywait -qe &lt;span class=&#34;s1&#34;&gt;&amp;#39;close_write&amp;#39;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$flagPath&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;read&lt;/span&gt; file&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;k&#34;&gt;fi)&lt;/span&gt;       &lt;span class=&#34;c1&#34;&gt;# 监听close_write事件，即以可写模式打开后关闭触发&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        hugo --quiet --cleanDestinationDir -s &lt;span class=&#34;nv&#34;&gt;$deployerPath&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; rsync --delete -a &lt;span class=&#34;s2&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;${&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;deployerPath&lt;/span&gt;&lt;span class=&#34;si&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;/public/&amp;#34;&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$nginxPath&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;# 编译并将public同步到nginx的html下&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$?&lt;/span&gt; -eq &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;then&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Successfully deployed &lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$deployerPath&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt; to &lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$nginxPath&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s2&#34;&gt;        fi
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s2&#34;&gt;        sleep &lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$sleepTime&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s2&#34;&gt;done
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;systemd单元文件blog-deployer.service&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

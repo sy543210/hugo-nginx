@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Network on yysog&#39;s blog</title>
+    <link>http://yysog.com/tags/network/</link>
+    <description>Recent content in Network on yysog&#39;s blog</description>
+    <image>
+      <title>yysog&#39;s blog</title>
+      <url>http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</url>
+      <link>http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E</link>
+    </image>
+    <generator>Hugo -- 0.136.5</generator>
+    <language>zh</language>
+    <lastBuildDate>Thu, 12 Sep 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://yysog.com/tags/network/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>linux通过网桥将多网口主机当交换机</title>
+      <link>http://yysog.com/posts/linux%E7%BD%91%E6%A1%A5%E9%85%8D%E7%BD%AE/</link>
+      <pubDate>Thu, 12 Sep 2024 00:00:00 +0000</pubDate>
+      <guid>http://yysog.com/posts/linux%E7%BD%91%E6%A1%A5%E9%85%8D%E7%BD%AE/</guid>
+      <description>&lt;p&gt;在 Arch Linux 中将多网口主机配置为交换机可以通过创建一个网桥来实现&lt;/p&gt;
+&lt;h3 id=&#34;步骤-1安装必要的工具&#34;&gt;步骤 1：安装必要的工具&lt;/h3&gt;
+&lt;p&gt;确保系统上已安装 &lt;code&gt;bridge-utils&lt;/code&gt;，通常情况下它默认包含在 Arch Linux 中。如果没有，可以使用以下命令安装它：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo pacman -S bridge-utils
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;步骤-2创建网桥&#34;&gt;步骤 2：创建网桥&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;编辑网络配置文件&lt;/strong&gt;：在 Arch Linux 中，可以使用 &lt;code&gt;systemd&lt;/code&gt; 的网络配置方法或 &lt;code&gt;netctl&lt;/code&gt;。这里我们将使用 &lt;code&gt;systemd-networkd&lt;/code&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;创建网桥配置文件，例如 &lt;code&gt;/etc/systemd/network/10-br0.netdev&lt;/code&gt;：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-init&#34; data-lang=&#34;init&#34;&gt;[NetDev]
+Name=br0
+Kind=bridge
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;添加物理接口到网桥&lt;/strong&gt;：例如，假设有两个接口：&lt;code&gt;eth0&lt;/code&gt; 和 &lt;code&gt;eth1&lt;/code&gt;。需要分别为这些接口创建配置文件，例如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/etc/systemd/network/20-eth0.network&lt;/code&gt;：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-init&#34; data-lang=&#34;init&#34;&gt;[Match]
+Name=eth0
+
+[Network]
+Bridge=br0
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/etc/systemd/network/20-eth1.network&lt;/code&gt;：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-init&#34; data-lang=&#34;init&#34;&gt;[Match]
+Name=eth1
+
+[Network]
+Bridge=br0
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;配置网桥的IP地址&lt;/strong&gt;：如果网桥需要获取一个静态IP地址，可以创建另一个配置文件，例如 &lt;code&gt;/etc/systemd/network/30-br0.network&lt;/code&gt;：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-init&#34; data-lang=&#34;init&#34;&gt;[Match]
+Name=br0
+
+[Network]
+Address=192.168.1.100/24  # 请根据的网络环境调整
+Gateway=192.168.1.1
+DNS=8.8.8.8
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果想要使用 DHCP，可以设置：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-init&#34; data-lang=&#34;init&#34;&gt;[Match]
+Name=br0
+
+[Network]
+DHCP=yes
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;步骤-3启用并启动-systemd-networkd&#34;&gt;步骤 3：启用并启动 &lt;code&gt;systemd-networkd&lt;/code&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;启用 &lt;code&gt;systemd-networkd&lt;/code&gt; 服务：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo systemctl &lt;span class=&#34;nb&#34;&gt;enable&lt;/span&gt; systemd-networkd
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo systemctl start systemd-networkd
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;启用和启动 &lt;code&gt;systemd-resolved&lt;/code&gt; 服务（如果使用 DNS）：&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

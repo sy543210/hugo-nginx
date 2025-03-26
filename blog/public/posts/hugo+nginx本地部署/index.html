@@ -1,0 +1,201 @@
+<!doctype html><html lang=zh dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>hugo+Nginx本地部署 | yysog's blog</title>
+<meta name=keywords content="linux,hugo"><meta name=description content='最近想把之前写的markdown笔记部署起来搭个博客，主要有下面两方面考虑：
+
+便于多端访问：之前都用smb共享，但在移动端体验一般。
+便于格式的统一
+
+考虑到之后可能会将之些笔记部署的云上或github上，为了方便迁移，选择静态博客生成工具hugo.大多数教程的部署方案都是使用github action，但考虑到github正常访问速度等问题，故pass。
+由于手头有一台闲置的笔记本，目前用来当一个简单的服务器用，像一些smb，alist，ql等乱七八糟的内容都挂在上面。现在想把博客也挂上去，主要在局域网内访问，在外面需要的话也可以用内网穿透服务临时用一下。
+需求
+
+移植性好，以便日后可能的平台迁移(静态生成工具移植都方便)
+尽量降低对markdown编写侵入，编写完后自动化构建
+可以在不同应用编辑Markdown文档(主要是图片路径问题)
+
+方案
+自动化构建思路主要就两种：
+
+hugo server + nginx反向代理
+inotifywait + 脚本
+
+最开始本想通过直接通过第一种来实现。但后来发现有些应用(obsidian，还无法关闭)在写markdown的时候会自动保存文档，而且频率相当高。这就导致用hugo server后需要经常性的编译写好的文档，对性能影响较大，没办法就只能用inotifywait写脚本监听文件变化了。
+流程如下：
+
+创建一个文件deploy.md，用于inofitywait监控
+当编写完markdown后，能过修改文件deploy.md触发事件
+inotiywait收到事件后执行脚本编译，并将编译后的文件同步到nginx
+
+具体过程
+使用inofitywait先安装inotify-tools包：
+
+sudo pacman -S inotify-tools
+
+对于文件deploy.md，并没有啥要求。之所有选择md文件，主要是由于大部分markdown软件默认只显示md文件。inofitywait选择监控close_write事件，当想要发布内容时只需要随便改动一下文件保存即可。
+
+推荐放一个复选框- [ ] trigger
+
+监测deploy.md事件脚本(deployer.sh)：
+#!/bin/bash
+flagPath="/path/to/you/deploy.md"   # 参考：${HOME}/share/hugo/deploy.md
+deployerPath="/path/to/your/hugo/site"   # 参考：${HOME}/projects/hugo/blog
+nginxPath="/path/to/your/nginx/html/"  # 参考: ${HOME}/projects/docker/nginx/html/
+sleepTime=10    # 触发构建后10s之后才能再次构建
+while true; do
+        file=$(inotifywait -qe &#39;close_write&#39; $flagPath | if read file; then
+                echo $file
+        fi)       # 监听close_write事件，即以可写模式打开后关闭触发
+        hugo --quiet --cleanDestinationDir -s $deployerPath && rsync --delete -a "${deployerPath}/public/" $nginxPath # 编译并将public同步到nginx的html下
+        if [ $? -eq 0 ]; then
+                echo "Successfully deployed $deployerPath to $nginxPath
+        fi
+        sleep $sleepTime
+done
+systemd单元文件blog-deployer.service'><meta name=author content="Me"><link rel=canonical href=http://yysog.com/posts/hugo+nginx%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2/><meta name=google-site-verification content="XYZabc"><meta name=yandex-verification content="XYZabc"><meta name=msvalidate.01 content="XYZabc"><link crossorigin=anonymous href=/assets/css/stylesheet.896e450acd3c33140fc426ca0349495f05a3c94611298244cbd6b10253ce22a2.css integrity="sha256-iW5FCs08MxQPxCbKA0lJXwWjyUYRKYJEy9axAlPOIqI=" rel="preload stylesheet" as=style><link rel=icon href=http://yysog.com/favicon/favicon.ico><link rel=icon type=image/png sizes=16x16 href=http://yysog.com/favicon/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=http://yysog.com/favicon/favicon-32x32.png><link rel=apple-touch-icon href=http://yysog.com/favicon/apple-touch-icon.png><link rel=mask-icon href=http://yysog.com/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh href=http://yysog.com/posts/hugo+nginx%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><link rel=stylesheet href=https://npm.elemecdn.com/lxgw-wenkai-screen-webfont@1.7.0/style.css media=print onload='this.media="all"'><meta property="og:title" content="hugo+Nginx本地部署"><meta property="og:description" content='最近想把之前写的markdown笔记部署起来搭个博客，主要有下面两方面考虑：
+
+便于多端访问：之前都用smb共享，但在移动端体验一般。
+便于格式的统一
+
+考虑到之后可能会将之些笔记部署的云上或github上，为了方便迁移，选择静态博客生成工具hugo.大多数教程的部署方案都是使用github action，但考虑到github正常访问速度等问题，故pass。
+由于手头有一台闲置的笔记本，目前用来当一个简单的服务器用，像一些smb，alist，ql等乱七八糟的内容都挂在上面。现在想把博客也挂上去，主要在局域网内访问，在外面需要的话也可以用内网穿透服务临时用一下。
+需求
+
+移植性好，以便日后可能的平台迁移(静态生成工具移植都方便)
+尽量降低对markdown编写侵入，编写完后自动化构建
+可以在不同应用编辑Markdown文档(主要是图片路径问题)
+
+方案
+自动化构建思路主要就两种：
+
+hugo server + nginx反向代理
+inotifywait + 脚本
+
+最开始本想通过直接通过第一种来实现。但后来发现有些应用(obsidian，还无法关闭)在写markdown的时候会自动保存文档，而且频率相当高。这就导致用hugo server后需要经常性的编译写好的文档，对性能影响较大，没办法就只能用inotifywait写脚本监听文件变化了。
+流程如下：
+
+创建一个文件deploy.md，用于inofitywait监控
+当编写完markdown后，能过修改文件deploy.md触发事件
+inotiywait收到事件后执行脚本编译，并将编译后的文件同步到nginx
+
+具体过程
+使用inofitywait先安装inotify-tools包：
+
+sudo pacman -S inotify-tools
+
+对于文件deploy.md，并没有啥要求。之所有选择md文件，主要是由于大部分markdown软件默认只显示md文件。inofitywait选择监控close_write事件，当想要发布内容时只需要随便改动一下文件保存即可。
+
+推荐放一个复选框- [ ] trigger
+
+监测deploy.md事件脚本(deployer.sh)：
+#!/bin/bash
+flagPath="/path/to/you/deploy.md"   # 参考：${HOME}/share/hugo/deploy.md
+deployerPath="/path/to/your/hugo/site"   # 参考：${HOME}/projects/hugo/blog
+nginxPath="/path/to/your/nginx/html/"  # 参考: ${HOME}/projects/docker/nginx/html/
+sleepTime=10    # 触发构建后10s之后才能再次构建
+while true; do
+        file=$(inotifywait -qe &#39;close_write&#39; $flagPath | if read file; then
+                echo $file
+        fi)       # 监听close_write事件，即以可写模式打开后关闭触发
+        hugo --quiet --cleanDestinationDir -s $deployerPath && rsync --delete -a "${deployerPath}/public/" $nginxPath # 编译并将public同步到nginx的html下
+        if [ $? -eq 0 ]; then
+                echo "Successfully deployed $deployerPath to $nginxPath
+        fi
+        sleep $sleepTime
+done
+systemd单元文件blog-deployer.service'><meta property="og:type" content="article"><meta property="og:url" content="http://yysog.com/posts/hugo+nginx%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2/"><meta property="og:image" content="http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-08-29T00:00:00+00:00"><meta property="article:modified_time" content="2024-08-29T00:00:00+00:00"><meta property="og:site_name" content="ExampleSite"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E"><meta name=twitter:title content="hugo+Nginx本地部署"><meta name=twitter:description content='最近想把之前写的markdown笔记部署起来搭个博客，主要有下面两方面考虑：
+
+便于多端访问：之前都用smb共享，但在移动端体验一般。
+便于格式的统一
+
+考虑到之后可能会将之些笔记部署的云上或github上，为了方便迁移，选择静态博客生成工具hugo.大多数教程的部署方案都是使用github action，但考虑到github正常访问速度等问题，故pass。
+由于手头有一台闲置的笔记本，目前用来当一个简单的服务器用，像一些smb，alist，ql等乱七八糟的内容都挂在上面。现在想把博客也挂上去，主要在局域网内访问，在外面需要的话也可以用内网穿透服务临时用一下。
+需求
+
+移植性好，以便日后可能的平台迁移(静态生成工具移植都方便)
+尽量降低对markdown编写侵入，编写完后自动化构建
+可以在不同应用编辑Markdown文档(主要是图片路径问题)
+
+方案
+自动化构建思路主要就两种：
+
+hugo server + nginx反向代理
+inotifywait + 脚本
+
+最开始本想通过直接通过第一种来实现。但后来发现有些应用(obsidian，还无法关闭)在写markdown的时候会自动保存文档，而且频率相当高。这就导致用hugo server后需要经常性的编译写好的文档，对性能影响较大，没办法就只能用inotifywait写脚本监听文件变化了。
+流程如下：
+
+创建一个文件deploy.md，用于inofitywait监控
+当编写完markdown后，能过修改文件deploy.md触发事件
+inotiywait收到事件后执行脚本编译，并将编译后的文件同步到nginx
+
+具体过程
+使用inofitywait先安装inotify-tools包：
+
+sudo pacman -S inotify-tools
+
+对于文件deploy.md，并没有啥要求。之所有选择md文件，主要是由于大部分markdown软件默认只显示md文件。inofitywait选择监控close_write事件，当想要发布内容时只需要随便改动一下文件保存即可。
+
+推荐放一个复选框- [ ] trigger
+
+监测deploy.md事件脚本(deployer.sh)：
+#!/bin/bash
+flagPath="/path/to/you/deploy.md"   # 参考：${HOME}/share/hugo/deploy.md
+deployerPath="/path/to/your/hugo/site"   # 参考：${HOME}/projects/hugo/blog
+nginxPath="/path/to/your/nginx/html/"  # 参考: ${HOME}/projects/docker/nginx/html/
+sleepTime=10    # 触发构建后10s之后才能再次构建
+while true; do
+        file=$(inotifywait -qe &#39;close_write&#39; $flagPath | if read file; then
+                echo $file
+        fi)       # 监听close_write事件，即以可写模式打开后关闭触发
+        hugo --quiet --cleanDestinationDir -s $deployerPath && rsync --delete -a "${deployerPath}/public/" $nginxPath # 编译并将public同步到nginx的html下
+        if [ $? -eq 0 ]; then
+                echo "Successfully deployed $deployerPath to $nginxPath
+        fi
+        sleep $sleepTime
+done
+systemd单元文件blog-deployer.service'><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"http://yysog.com/posts/"},{"@type":"ListItem","position":2,"name":"hugo+Nginx本地部署","item":"http://yysog.com/posts/hugo+nginx%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"hugo+Nginx本地部署","name":"hugo\u002bNginx本地部署","description":"最近想把之前写的markdown笔记部署起来搭个博客，主要有下面两方面考虑：\n便于多端访问：之前都用smb共享，但在移动端体验一般。 便于格式的统一 考虑到之后可能会将之些笔记部署的云上或github上，为了方便迁移，选择静态博客生成工具hugo.大多数教程的部署方案都是使用github action，但考虑到github正常访问速度等问题，故pass。\n由于手头有一台闲置的笔记本，目前用来当一个简单的服务器用，像一些smb，alist，ql等乱七八糟的内容都挂在上面。现在想把博客也挂上去，主要在局域网内访问，在外面需要的话也可以用内网穿透服务临时用一下。\n需求 移植性好，以便日后可能的平台迁移(静态生成工具移植都方便) 尽量降低对markdown编写侵入，编写完后自动化构建 可以在不同应用编辑Markdown文档(主要是图片路径问题) 方案 自动化构建思路主要就两种：\nhugo server + nginx反向代理 inotifywait + 脚本 最开始本想通过直接通过第一种来实现。但后来发现有些应用(obsidian，还无法关闭)在写markdown的时候会自动保存文档，而且频率相当高。这就导致用hugo server后需要经常性的编译写好的文档，对性能影响较大，没办法就只能用inotifywait写脚本监听文件变化了。\n流程如下：\n创建一个文件deploy.md，用于inofitywait监控 当编写完markdown后，能过修改文件deploy.md触发事件 inotiywait收到事件后执行脚本编译，并将编译后的文件同步到nginx 具体过程 使用inofitywait先安装inotify-tools包：\nsudo pacman -S inotify-tools\n对于文件deploy.md，并没有啥要求。之所有选择md文件，主要是由于大部分markdown软件默认只显示md文件。inofitywait选择监控close_write事件，当想要发布内容时只需要随便改动一下文件保存即可。\n推荐放一个复选框- [ ] trigger\n监测deploy.md事件脚本(deployer.sh)：\n#!/bin/bash flagPath=\u0026#34;/path/to/you/deploy.md\u0026#34; # 参考：${HOME}/share/hugo/deploy.md deployerPath=\u0026#34;/path/to/your/hugo/site\u0026#34; # 参考：${HOME}/projects/hugo/blog nginxPath=\u0026#34;/path/to/your/nginx/html/\u0026#34; # 参考: ${HOME}/projects/docker/nginx/html/ sleepTime=10 # 触发构建后10s之后才能再次构建 while true; do file=$(inotifywait -qe \u0026#39;close_write\u0026#39; $flagPath | if read file; then echo $file fi) # 监听close_write事件，即以可写模式打开后关闭触发 hugo --quiet --cleanDestinationDir -s $deployerPath \u0026amp;\u0026amp; rsync --delete -a \u0026#34;${deployerPath}/public/\u0026#34; $nginxPath # 编译并将public同步到nginx的html下 if [ $? -eq 0 ]; then echo \u0026#34;Successfully deployed $deployerPath to $nginxPath fi sleep $sleepTime done systemd单元文件blog-deployer.service\n","keywords":["linux","hugo"],"articleBody":"最近想把之前写的markdown笔记部署起来搭个博客，主要有下面两方面考虑：\n便于多端访问：之前都用smb共享，但在移动端体验一般。 便于格式的统一 考虑到之后可能会将之些笔记部署的云上或github上，为了方便迁移，选择静态博客生成工具hugo.大多数教程的部署方案都是使用github action，但考虑到github正常访问速度等问题，故pass。\n由于手头有一台闲置的笔记本，目前用来当一个简单的服务器用，像一些smb，alist，ql等乱七八糟的内容都挂在上面。现在想把博客也挂上去，主要在局域网内访问，在外面需要的话也可以用内网穿透服务临时用一下。\n需求 移植性好，以便日后可能的平台迁移(静态生成工具移植都方便) 尽量降低对markdown编写侵入，编写完后自动化构建 可以在不同应用编辑Markdown文档(主要是图片路径问题) 方案 自动化构建思路主要就两种：\nhugo server + nginx反向代理 inotifywait + 脚本 最开始本想通过直接通过第一种来实现。但后来发现有些应用(obsidian，还无法关闭)在写markdown的时候会自动保存文档，而且频率相当高。这就导致用hugo server后需要经常性的编译写好的文档，对性能影响较大，没办法就只能用inotifywait写脚本监听文件变化了。\n流程如下：\n创建一个文件deploy.md，用于inofitywait监控 当编写完markdown后，能过修改文件deploy.md触发事件 inotiywait收到事件后执行脚本编译，并将编译后的文件同步到nginx 具体过程 使用inofitywait先安装inotify-tools包：\nsudo pacman -S inotify-tools\n对于文件deploy.md，并没有啥要求。之所有选择md文件，主要是由于大部分markdown软件默认只显示md文件。inofitywait选择监控close_write事件，当想要发布内容时只需要随便改动一下文件保存即可。\n推荐放一个复选框- [ ] trigger\n监测deploy.md事件脚本(deployer.sh)：\n#!/bin/bash flagPath=\"/path/to/you/deploy.md\" # 参考：${HOME}/share/hugo/deploy.md deployerPath=\"/path/to/your/hugo/site\" # 参考：${HOME}/projects/hugo/blog nginxPath=\"/path/to/your/nginx/html/\" # 参考: ${HOME}/projects/docker/nginx/html/ sleepTime=10 # 触发构建后10s之后才能再次构建 while true; do file=$(inotifywait -qe 'close_write' $flagPath | if read file; then echo $file fi) # 监听close_write事件，即以可写模式打开后关闭触发 hugo --quiet --cleanDestinationDir -s $deployerPath \u0026\u0026 rsync --delete -a \"${deployerPath}/public/\" $nginxPath # 编译并将public同步到nginx的html下 if [ $? -eq 0 ]; then echo \"Successfully deployed $deployerPath to $nginxPath fi sleep $sleepTime done systemd单元文件blog-deployer.service\n注意替换\u003c\u003e中内容\n[Unit] Description=Deployer blog to nginx after md file changed After=network-online.target [Service] Type=simple User= Group= ExecStart=/deployer.sh Restart=on-failure StandardOutput=syslog StandardError=syslog [Install] WantedBy=multi-user.target 启动服务\nsudo ln -s ${PWD}/blog-deployer.service /usr/lib/systemd/system/blog-deployer.service sudo systemctl daemon-reload \u0026\u0026 sudo systemctl enable --now blog-deployer 关于hugo的图片路径问题 markdown的图片管理一直是一个麻烦的问题。如果将放本地，如果想迁移文件或发表到其它平台时也需要将文档内图片一起带上，这种情况放云上通过链接访问毫无疑问是一个更好的选择。但这也意味着需要一笔费用来购买对应的服务或服务器，而且在没网络的情况下图片是无法加载的，对我来说放在本地就可以了。\n放本地会遇到的问题就是hugo图片路径和markdown对不上的问题。这时候一个解决文案就是能过hugo的联合文件系统\n只需要将下面的内容放到hugo的config.yaml中\n我的obsidian文件夹在${HOME}/share/hugo，yaml文件在${HOME}/projects/hugo/blog/config.yaml\nmodule: mounts: - source: content target: content - source: /home/yysog/share/typora/hugo/content target: content - source: static target: static - source: /home/yysog/share/typora/hugo/img target: static/img 并使用相对路径下访问图片，在obsidian中可以打开基于当前笔记的相对路径(typora也有类似设置)\n然后下载插件Custom Attachment Location，并设置如下\n我的obsidian仓库结构如下：\nmd文件放在content下，图像会自动放在img下。之后要迁移只需找到对应文件名开头的图片进行复制就行，这样无论是在markdown软件还是博客中打开，图片都能正确加载。\n","wordCount":"168","inLanguage":"zh","image":"http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E","datePublished":"2024-08-29T00:00:00Z","dateModified":"2024-08-29T00:00:00Z","author":{"@type":"Person","name":"Me"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://yysog.com/posts/hugo+nginx%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2/"},"publisher":{"@type":"Organization","name":"yysog's blog","logo":{"@type":"ImageObject","url":"http://yysog.com/favicon/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=http://yysog.com/ accesskey=h title="Hello, life (Alt + H)">Hello, life</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=http://yysog.com/archives/ title=文章><span>文章</span></a></li><li><a href=http://yysog.com/tags/ title=标签><span>标签</span></a></li><li><a href=http://yysog.com/search/ title="搜索 (Alt + /)" accesskey=/><span>搜索</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=http://yysog.com/>主页</a>&nbsp;»&nbsp;<a href=http://yysog.com/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">hugo+Nginx本地部署</h1><div class=post-meta><span title='2024-08-29 00:00:00 +0000 UTC'>八月 29, 2024</span>&nbsp;·&nbsp;1 分钟&nbsp;·&nbsp;168 字&nbsp;·&nbsp;Me&nbsp;|&nbsp;<a href=https://github.com/%3cpath_to_repo%3e/content/posts/hugo+Nginx%e6%9c%ac%e5%9c%b0%e9%83%a8%e7%bd%b2.md rel="noopener noreferrer" target=_blank>Suggest Changes</a></div></header><aside id=toc-container class="toc-container wide"><div class=toc><details open><summary accesskey=c title="(Alt + C)"><span class=details>目录</span></summary><div class=inner><ul><li><a href=#%e9%9c%80%e6%b1%82 aria-label=需求>需求</a></li><li><a href=#%e6%96%b9%e6%a1%88 aria-label=方案>方案</a><ul><li><a href=#%e5%85%b7%e4%bd%93%e8%bf%87%e7%a8%8b aria-label=具体过程>具体过程</a></li><li><a href=#%e5%85%b3%e4%ba%8ehugo%e7%9a%84%e5%9b%be%e7%89%87%e8%b7%af%e5%be%84%e9%97%ae%e9%a2%98 aria-label=关于hugo的图片路径问题>关于hugo的图片路径问题</a></li></ul></li></ul></div></details></div></aside><script>let activeElement,elements;window.addEventListener("DOMContentLoaded",function(){checkTocPosition(),elements=document.querySelectorAll("h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]"),activeElement=elements[0];const t=encodeURI(activeElement.getAttribute("id")).toLowerCase();document.querySelector(`.inner ul li a[href="#${t}"]`).classList.add("active")},!1),window.addEventListener("resize",function(){checkTocPosition()},!1),window.addEventListener("scroll",()=>{activeElement=Array.from(elements).find(e=>{if(getOffsetTop(e)-window.pageYOffset>0&&getOffsetTop(e)-window.pageYOffset<window.innerHeight/2)return e})||activeElement,elements.forEach(e=>{const t=encodeURI(e.getAttribute("id")).toLowerCase();e===activeElement?document.querySelector(`.inner ul li a[href="#${t}"]`).classList.add("active"):document.querySelector(`.inner ul li a[href="#${t}"]`).classList.remove("active")})},!1);const main=parseInt(getComputedStyle(document.body).getPropertyValue("--article-width"),10),toc=parseInt(getComputedStyle(document.body).getPropertyValue("--toc-width"),10),gap=parseInt(getComputedStyle(document.body).getPropertyValue("--gap"),10);function checkTocPosition(){const e=document.body.scrollWidth;e-main-toc*2-gap*4>0?document.getElementById("toc-container").classList.add("wide"):document.getElementById("toc-container").classList.remove("wide")}function getOffsetTop(e){if(!e.getClientRects().length)return 0;let t=e.getBoundingClientRect(),n=e.ownerDocument.defaultView;return t.top+n.pageYOffset}</script><div class=post-content><p>最近想把之前写的markdown笔记部署起来搭个博客，主要有下面两方面考虑：</p><ul><li>便于多端访问：之前都用smb共享，但在移动端体验一般。</li><li>便于格式的统一</li></ul><p>考虑到之后可能会将之些笔记部署的云上或github上，为了方便迁移，选择静态博客生成工具<a href=https://gohugo.io/>hugo</a>.大多数教程的部署方案都是使用github action，但考虑到github正常访问速度等问题，故pass。</p><p>由于手头有一台闲置的笔记本，目前用来当一个简单的服务器用，像一些smb，alist，ql等乱七八糟的内容都挂在上面。现在想把博客也挂上去，主要在局域网内访问，在外面需要的话也可以用内网穿透服务临时用一下。</p><h2 id=需求>需求<a hidden class=anchor aria-hidden=true href=#需求>#</a></h2><ol><li>移植性好，以便日后可能的平台迁移(静态生成工具移植都方便)</li><li>尽量降低对markdown编写侵入，编写完后自动化构建</li><li>可以在不同应用编辑Markdown文档(主要是图片路径问题)</li></ol><h2 id=方案>方案<a hidden class=anchor aria-hidden=true href=#方案>#</a></h2><p>自动化构建思路主要就两种：</p><ul><li>hugo server + nginx反向代理</li><li>inotifywait + 脚本</li></ul><p>最开始本想通过直接通过第一种来实现。但后来发现有些应用(obsidian，还<a href=https://forum.obsidian.md/t/disable-auto-save-or-change-frequency/14230/35>无法关闭</a>)在写markdown的时候会自动保存文档，而且频率相当高。这就导致用hugo server后需要经常性的编译写好的文档，对性能影响较大，没办法就只能用inotifywait写脚本监听文件变化了。</p><p>流程如下：</p><ol><li>创建一个文件deploy.md，用于inofitywait监控</li><li>当编写完markdown后，能过修改文件deploy.md触发事件</li><li>inotiywait收到事件后执行脚本编译，并将编译后的文件同步到nginx</li></ol><h3 id=具体过程>具体过程<a hidden class=anchor aria-hidden=true href=#具体过程>#</a></h3><p>使用<a href=https://man.archlinux.org/man/inotifywait.1>inofitywait</a>先安装<code>inotify-tools</code>包：</p><blockquote><p>sudo pacman -S inotify-tools</p></blockquote><p>对于文件deploy.md，并没有啥要求。之所有选择md文件，主要是由于大部分markdown软件默认只显示md文件。inofitywait选择监控close_write事件，当想要发布内容时只需要随便改动一下文件保存即可。</p><blockquote><p>推荐放一个复选框<code>- [ ] trigger</code></p></blockquote><p>监测deploy.md事件脚本(deployer.sh)：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl><span class=cp>#!/bin/bash
+</span></span></span><span class=line><span class=cl><span class=cp></span><span class=nv>flagPath</span><span class=o>=</span><span class=s2>&#34;/path/to/you/deploy.md&#34;</span>   <span class=c1># 参考：${HOME}/share/hugo/deploy.md</span>
+</span></span><span class=line><span class=cl><span class=nv>deployerPath</span><span class=o>=</span><span class=s2>&#34;/path/to/your/hugo/site&#34;</span>   <span class=c1># 参考：${HOME}/projects/hugo/blog</span>
+</span></span><span class=line><span class=cl><span class=nv>nginxPath</span><span class=o>=</span><span class=s2>&#34;/path/to/your/nginx/html/&#34;</span>  <span class=c1># 参考: ${HOME}/projects/docker/nginx/html/</span>
+</span></span><span class=line><span class=cl><span class=nv>sleepTime</span><span class=o>=</span><span class=m>10</span>    <span class=c1># 触发构建后10s之后才能再次构建</span>
+</span></span><span class=line><span class=cl><span class=k>while</span> true<span class=p>;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>        <span class=nv>file</span><span class=o>=</span><span class=k>$(</span>inotifywait -qe <span class=s1>&#39;close_write&#39;</span> <span class=nv>$flagPath</span> <span class=p>|</span> <span class=k>if</span> <span class=nb>read</span> file<span class=p>;</span> <span class=k>then</span>
+</span></span><span class=line><span class=cl>                <span class=nb>echo</span> <span class=nv>$file</span>
+</span></span><span class=line><span class=cl>        <span class=k>fi)</span>       <span class=c1># 监听close_write事件，即以可写模式打开后关闭触发</span>
+</span></span><span class=line><span class=cl>        hugo --quiet --cleanDestinationDir -s <span class=nv>$deployerPath</span> <span class=o>&amp;&amp;</span> rsync --delete -a <span class=s2>&#34;</span><span class=si>${</span><span class=nv>deployerPath</span><span class=si>}</span><span class=s2>/public/&#34;</span> <span class=nv>$nginxPath</span> <span class=c1># 编译并将public同步到nginx的html下</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=o>[</span> <span class=nv>$?</span> -eq <span class=m>0</span> <span class=o>]</span><span class=p>;</span> <span class=k>then</span>
+</span></span><span class=line><span class=cl>                <span class=nb>echo</span> <span class=s2>&#34;Successfully deployed </span><span class=nv>$deployerPath</span><span class=s2> to </span><span class=nv>$nginxPath</span><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>        fi
+</span></span></span><span class=line><span class=cl><span class=s2>        sleep </span><span class=nv>$sleepTime</span><span class=s2>
+</span></span></span><span class=line><span class=cl><span class=s2>done
+</span></span></span></code></pre></div><p>systemd单元文件blog-deployer.service</p><blockquote><p>注意替换&lt;>中内容</p></blockquote><pre tabindex=0><code>[Unit]
+Description=Deployer blog to nginx after md file changed
+After=network-online.target
+
+[Service]
+Type=simple
+User=&lt;you&gt;
+Group=&lt;yourgourp&gt;
+ExecStart=&lt;/path/to/you&gt;/deployer.sh
+Restart=on-failure
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
+</code></pre><p>启动服务</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>sudo ln -s <span class=si>${</span><span class=nv>PWD</span><span class=si>}</span>/blog-deployer.service /usr/lib/systemd/system/blog-deployer.service
+</span></span><span class=line><span class=cl>sudo systemctl daemon-reload <span class=o>&amp;&amp;</span> sudo systemctl <span class=nb>enable</span> --now blog-deployer
+</span></span></code></pre></div><h3 id=关于hugo的图片路径问题>关于hugo的图片路径问题<a hidden class=anchor aria-hidden=true href=#关于hugo的图片路径问题>#</a></h3><p>markdown的图片管理一直是一个麻烦的问题。如果将放本地，如果想迁移文件或发表到其它平台时也需要将文档内图片一起带上，这种情况放云上通过链接访问毫无疑问是一个更好的选择。但这也意味着需要一笔费用来购买对应的服务或服务器，而且在没网络的情况下图片是无法加载的，对我来说放在本地就可以了。</p><p>放本地会遇到的问题就是hugo图片路径和markdown对不上的问题。这时候一个解决文案就是能过hugo的<a href=https://gohugo.io/getting-started/directory-structure/#union-file-system>联合文件系统</a></p><p>只需要将下面的内容放到hugo的config.yaml中</p><blockquote><p>我的obsidian文件夹在${HOME}/share/hugo，yaml文件在${HOME}/projects/hugo/blog/config.yaml</p></blockquote><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>module</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mounts</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>source</span><span class=p>:</span><span class=w> </span><span class=l>content</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>target</span><span class=p>:</span><span class=w> </span><span class=l>content</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>source</span><span class=p>:</span><span class=w> </span><span class=l>/home/yysog/share/typora/hugo/content</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>target</span><span class=p>:</span><span class=w> </span><span class=l>content</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>source</span><span class=p>:</span><span class=w> </span><span class=l>static</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>target</span><span class=p>:</span><span class=w> </span><span class=l>static</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span>- <span class=nt>source</span><span class=p>:</span><span class=w> </span><span class=l>/home/yysog/share/typora/hugo/img</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>      </span><span class=nt>target</span><span class=p>:</span><span class=w> </span><span class=l>static/img</span><span class=w>
+</span></span></span></code></pre></div><p>并使用相对路径下访问图片，在obsidian中可以打开<strong>基于当前笔记的相对路径</strong>(typora也有类似设置)<br><img loading=lazy src=../../img/posts/hugo+Nginx%e6%9c%ac%e5%9c%b0%e9%83%a8%e7%bd%b2-20240831165521953.webp alt></p><p>然后下载插件<strong>Custom Attachment Location</strong>，并设置如下<br><img loading=lazy src=../../img/posts/hugo+Nginx%e6%9c%ac%e5%9c%b0%e9%83%a8%e7%bd%b2-20240831174507362.webp alt></p><p>我的obsidian仓库结构如下：<br><img loading=lazy src=../../img/posts/hugo+Nginx%e6%9c%ac%e5%9c%b0%e9%83%a8%e7%bd%b2-20240831174334130.webp alt></p><p>md文件放在content下，图像会自动放在img下。之后要迁移只需找到对应文件名开头的图片进行复制就行，这样无论是在markdown软件还是博客中打开，图片都能正确加载。</p></div><footer class=post-footer><ul class=post-tags><li><a href=http://yysog.com/tags/linux/>Linux</a></li><li><a href=http://yysog.com/tags/hugo/>Hugo</a></li></ul><nav class=paginav><a class=prev href=http://yysog.com/posts/linux%E7%AC%94%E8%AE%B0/><span class=title>« 上一页</span><br><span>linux笔记</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2024 <a href=http://yysog.com/>yysog's blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="复制";function s(){t.innerHTML="已复制！",setTimeout(()=>{t.innerHTML="复制"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>

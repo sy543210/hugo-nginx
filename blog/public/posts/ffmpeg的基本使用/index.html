@@ -1,0 +1,99 @@
+<!doctype html><html lang=zh dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>FFmpeg的基本使用 | yysog's blog</title>
+<meta name=keywords content="tools"><meta name=description content='文档
+FFmpeg
+介绍
+ffmpeg 是一款通用的媒体转换器。它能读取各种输入（包括实时抓取/录制设备），并将其过滤和转码为大量输出格式。
+转码程序工作图
+
+
+
+muxer：即多路复用器，主要用于将音频流、视频流、字幕流等不同的数据流进行混合，生成一个包含所有信息的单一数据流。如mp4等格式
+demuxer：对视频进行解封装
+
+工具
+
+ffmpeg：主程序
+ffplay：简单的音视频查看工具
+ffprobe：查看音视频信息工具
+
+示例
+
+查看文件信息：ffmpeg -i demo.mp4或ffprobe demo.mp4，添加-hide_banner可以隐藏版本，配置参数等信息
+转换文件格式：ffmpeg -i demo.mp4 demo.mov
+获取一张视频截图：ffmpeg -i demo.mp4 -ss 00:00:01 -f image2 -vframes 1 out.jpg
+视频添加水印：`ffmpeg -i demo.mp4 -i logo.png -filter_complex &ldquo;overlay=x:y out.mp4&rdquo;
+视频去除水印：ffmpeg -i demo.mp4 -vf "delogo=x=xxx:y=xxx:w=xxx:h=xxx:show=0" -c:a copy out.mp4
+更改视频分辨率：ffmpeg -i demo.mp4 -vf scale=-1:720
+删除视频中的音频：ffmpeg -i demo.mp4 -an out.mp4
+视频转gif图：ffmpeg -i demo.mp4 -ss 00:00:30 -t3 -vf "fps=24,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" test.gif
+
+参考
+知乎：FFMPEG详解(完整版）
+B站：FFmpeg 速成教学
+视频转gif图'><meta name=author content="Me"><link rel=canonical href=http://yysog.com/posts/ffmpeg%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/><meta name=google-site-verification content="XYZabc"><meta name=yandex-verification content="XYZabc"><meta name=msvalidate.01 content="XYZabc"><link crossorigin=anonymous href=/assets/css/stylesheet.896e450acd3c33140fc426ca0349495f05a3c94611298244cbd6b10253ce22a2.css integrity="sha256-iW5FCs08MxQPxCbKA0lJXwWjyUYRKYJEy9axAlPOIqI=" rel="preload stylesheet" as=style><link rel=icon href=http://yysog.com/favicon/favicon.ico><link rel=icon type=image/png sizes=16x16 href=http://yysog.com/favicon/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=http://yysog.com/favicon/favicon-32x32.png><link rel=apple-touch-icon href=http://yysog.com/favicon/apple-touch-icon.png><link rel=mask-icon href=http://yysog.com/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=zh href=http://yysog.com/posts/ffmpeg%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><link rel=stylesheet href=https://npm.elemecdn.com/lxgw-wenkai-screen-webfont@1.7.0/style.css media=print onload='this.media="all"'><meta property="og:title" content="FFmpeg的基本使用"><meta property="og:description" content='文档
+FFmpeg
+介绍
+ffmpeg 是一款通用的媒体转换器。它能读取各种输入（包括实时抓取/录制设备），并将其过滤和转码为大量输出格式。
+转码程序工作图
+
+
+
+muxer：即多路复用器，主要用于将音频流、视频流、字幕流等不同的数据流进行混合，生成一个包含所有信息的单一数据流。如mp4等格式
+demuxer：对视频进行解封装
+
+工具
+
+ffmpeg：主程序
+ffplay：简单的音视频查看工具
+ffprobe：查看音视频信息工具
+
+示例
+
+查看文件信息：ffmpeg -i demo.mp4或ffprobe demo.mp4，添加-hide_banner可以隐藏版本，配置参数等信息
+转换文件格式：ffmpeg -i demo.mp4 demo.mov
+获取一张视频截图：ffmpeg -i demo.mp4 -ss 00:00:01 -f image2 -vframes 1 out.jpg
+视频添加水印：`ffmpeg -i demo.mp4 -i logo.png -filter_complex &ldquo;overlay=x:y out.mp4&rdquo;
+视频去除水印：ffmpeg -i demo.mp4 -vf "delogo=x=xxx:y=xxx:w=xxx:h=xxx:show=0" -c:a copy out.mp4
+更改视频分辨率：ffmpeg -i demo.mp4 -vf scale=-1:720
+删除视频中的音频：ffmpeg -i demo.mp4 -an out.mp4
+视频转gif图：ffmpeg -i demo.mp4 -ss 00:00:30 -t3 -vf "fps=24,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" test.gif
+
+参考
+知乎：FFMPEG详解(完整版）
+B站：FFmpeg 速成教学
+视频转gif图'><meta property="og:type" content="article"><meta property="og:url" content="http://yysog.com/posts/ffmpeg%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/"><meta property="og:image" content="http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-10-11T00:00:00+00:00"><meta property="article:modified_time" content="2024-10-11T00:00:00+00:00"><meta property="og:site_name" content="ExampleSite"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E"><meta name=twitter:title content="FFmpeg的基本使用"><meta name=twitter:description content='文档
+FFmpeg
+介绍
+ffmpeg 是一款通用的媒体转换器。它能读取各种输入（包括实时抓取/录制设备），并将其过滤和转码为大量输出格式。
+转码程序工作图
+
+
+
+muxer：即多路复用器，主要用于将音频流、视频流、字幕流等不同的数据流进行混合，生成一个包含所有信息的单一数据流。如mp4等格式
+demuxer：对视频进行解封装
+
+工具
+
+ffmpeg：主程序
+ffplay：简单的音视频查看工具
+ffprobe：查看音视频信息工具
+
+示例
+
+查看文件信息：ffmpeg -i demo.mp4或ffprobe demo.mp4，添加-hide_banner可以隐藏版本，配置参数等信息
+转换文件格式：ffmpeg -i demo.mp4 demo.mov
+获取一张视频截图：ffmpeg -i demo.mp4 -ss 00:00:01 -f image2 -vframes 1 out.jpg
+视频添加水印：`ffmpeg -i demo.mp4 -i logo.png -filter_complex &ldquo;overlay=x:y out.mp4&rdquo;
+视频去除水印：ffmpeg -i demo.mp4 -vf "delogo=x=xxx:y=xxx:w=xxx:h=xxx:show=0" -c:a copy out.mp4
+更改视频分辨率：ffmpeg -i demo.mp4 -vf scale=-1:720
+删除视频中的音频：ffmpeg -i demo.mp4 -an out.mp4
+视频转gif图：ffmpeg -i demo.mp4 -ss 00:00:30 -t3 -vf "fps=24,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" test.gif
+
+参考
+知乎：FFMPEG详解(完整版）
+B站：FFmpeg 速成教学
+视频转gif图'><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"http://yysog.com/posts/"},{"@type":"ListItem","position":2,"name":"FFmpeg的基本使用","item":"http://yysog.com/posts/ffmpeg%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"FFmpeg的基本使用","name":"FFmpeg的基本使用","description":"文档\nFFmpeg 介绍 ffmpeg 是一款通用的媒体转换器。它能读取各种输入（包括实时抓取/录制设备），并将其过滤和转码为大量输出格式。\n转码程序工作图 muxer：即多路复用器，主要用于将音频流、视频流、字幕流等不同的数据流进行混合，生成一个包含所有信息的单一数据流。如mp4等格式 demuxer：对视频进行解封装 工具 ffmpeg：主程序 ffplay：简单的音视频查看工具 ffprobe：查看音视频信息工具 示例 查看文件信息：ffmpeg -i demo.mp4或ffprobe demo.mp4，添加-hide_banner可以隐藏版本，配置参数等信息 转换文件格式：ffmpeg -i demo.mp4 demo.mov 获取一张视频截图：ffmpeg -i demo.mp4 -ss 00:00:01 -f image2 -vframes 1 out.jpg 视频添加水印：`ffmpeg -i demo.mp4 -i logo.png -filter_complex \u0026ldquo;overlay=x:y out.mp4\u0026rdquo; 视频去除水印：ffmpeg -i demo.mp4 -vf \u0026quot;delogo=x=xxx:y=xxx:w=xxx:h=xxx:show=0\u0026quot; -c:a copy out.mp4 更改视频分辨率：ffmpeg -i demo.mp4 -vf scale=-1:720 删除视频中的音频：ffmpeg -i demo.mp4 -an out.mp4 视频转gif图：ffmpeg -i demo.mp4 -ss 00:00:30 -t3 -vf \u0026quot;fps=24,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse\u0026quot; test.gif 参考 知乎：FFMPEG详解(完整版）\nB站：FFmpeg 速成教学\n视频转gif图\n","keywords":["tools"],"articleBody":"文档\nFFmpeg 介绍 ffmpeg 是一款通用的媒体转换器。它能读取各种输入（包括实时抓取/录制设备），并将其过滤和转码为大量输出格式。\n转码程序工作图 muxer：即多路复用器，主要用于将音频流、视频流、字幕流等不同的数据流进行混合，生成一个包含所有信息的单一数据流。如mp4等格式 demuxer：对视频进行解封装 工具 ffmpeg：主程序 ffplay：简单的音视频查看工具 ffprobe：查看音视频信息工具 示例 查看文件信息：ffmpeg -i demo.mp4或ffprobe demo.mp4，添加-hide_banner可以隐藏版本，配置参数等信息 转换文件格式：ffmpeg -i demo.mp4 demo.mov 获取一张视频截图：ffmpeg -i demo.mp4 -ss 00:00:01 -f image2 -vframes 1 out.jpg 视频添加水印：`ffmpeg -i demo.mp4 -i logo.png -filter_complex “overlay=x:y out.mp4” 视频去除水印：ffmpeg -i demo.mp4 -vf \"delogo=x=xxx:y=xxx:w=xxx:h=xxx:show=0\" -c:a copy out.mp4 更改视频分辨率：ffmpeg -i demo.mp4 -vf scale=-1:720 删除视频中的音频：ffmpeg -i demo.mp4 -an out.mp4 视频转gif图：ffmpeg -i demo.mp4 -ss 00:00:30 -t3 -vf \"fps=24,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse\" test.gif 参考 知乎：FFMPEG详解(完整版）\nB站：FFmpeg 速成教学\n视频转gif图\n","wordCount":"71","inLanguage":"zh","image":"http://yysog.com/%3Clink%20or%20path%20of%20image%20for%20opengraph,%20twitter-cards%3E","datePublished":"2024-10-11T00:00:00Z","dateModified":"2024-10-11T00:00:00Z","author":{"@type":"Person","name":"Me"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://yysog.com/posts/ffmpeg%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/"},"publisher":{"@type":"Organization","name":"yysog's blog","logo":{"@type":"ImageObject","url":"http://yysog.com/favicon/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=http://yysog.com/ accesskey=h title="Hello, life (Alt + H)">Hello, life</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=http://yysog.com/archives/ title=文章><span>文章</span></a></li><li><a href=http://yysog.com/tags/ title=标签><span>标签</span></a></li><li><a href=http://yysog.com/search/ title="搜索 (Alt + /)" accesskey=/><span>搜索</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><div class=breadcrumbs><a href=http://yysog.com/>主页</a>&nbsp;»&nbsp;<a href=http://yysog.com/posts/>Posts</a></div><h1 class="post-title entry-hint-parent">FFmpeg的基本使用</h1><div class=post-meta><span title='2024-10-11 00:00:00 +0000 UTC'>十月 11, 2024</span>&nbsp;·&nbsp;1 分钟&nbsp;·&nbsp;71 字&nbsp;·&nbsp;Me&nbsp;|&nbsp;<a href=https://github.com/%3cpath_to_repo%3e/content/posts/FFmpeg%e7%9a%84%e5%9f%ba%e6%9c%ac%e4%bd%bf%e7%94%a8.md rel="noopener noreferrer" target=_blank>Suggest Changes</a></div></header><aside id=toc-container class="toc-container wide"><div class=toc><details open><summary accesskey=c title="(Alt + C)"><span class=details>目录</span></summary><div class=inner><ul><li><a href=#ffmpeg aria-label=FFmpeg>FFmpeg</a><ul><li><a href=#%e4%bb%8b%e7%bb%8d aria-label=介绍>介绍</a></li><li><a href=#%e8%bd%ac%e7%a0%81%e7%a8%8b%e5%ba%8f%e5%b7%a5%e4%bd%9c%e5%9b%be aria-label=转码程序工作图>转码程序工作图</a></li><li><a href=#%e5%b7%a5%e5%85%b7 aria-label=工具>工具</a></li><li><a href=#%e7%a4%ba%e4%be%8b aria-label=示例>示例</a></li><li><a href=#%e5%8f%82%e8%80%83 aria-label=参考>参考</a></li></ul></li></ul></div></details></div></aside><script>let activeElement,elements;window.addEventListener("DOMContentLoaded",function(){checkTocPosition(),elements=document.querySelectorAll("h1[id],h2[id],h3[id],h4[id],h5[id],h6[id]"),activeElement=elements[0];const t=encodeURI(activeElement.getAttribute("id")).toLowerCase();document.querySelector(`.inner ul li a[href="#${t}"]`).classList.add("active")},!1),window.addEventListener("resize",function(){checkTocPosition()},!1),window.addEventListener("scroll",()=>{activeElement=Array.from(elements).find(e=>{if(getOffsetTop(e)-window.pageYOffset>0&&getOffsetTop(e)-window.pageYOffset<window.innerHeight/2)return e})||activeElement,elements.forEach(e=>{const t=encodeURI(e.getAttribute("id")).toLowerCase();e===activeElement?document.querySelector(`.inner ul li a[href="#${t}"]`).classList.add("active"):document.querySelector(`.inner ul li a[href="#${t}"]`).classList.remove("active")})},!1);const main=parseInt(getComputedStyle(document.body).getPropertyValue("--article-width"),10),toc=parseInt(getComputedStyle(document.body).getPropertyValue("--toc-width"),10),gap=parseInt(getComputedStyle(document.body).getPropertyValue("--gap"),10);function checkTocPosition(){const e=document.body.scrollWidth;e-main-toc*2-gap*4>0?document.getElementById("toc-container").classList.add("wide"):document.getElementById("toc-container").classList.remove("wide")}function getOffsetTop(e){if(!e.getClientRects().length)return 0;let t=e.getBoundingClientRect(),n=e.ownerDocument.defaultView;return t.top+n.pageYOffset}</script><div class=post-content><p><a href=https://ffmpeg.org/ffmpeg.html>文档</a></p><h1 id=ffmpeg>FFmpeg<a hidden class=anchor aria-hidden=true href=#ffmpeg>#</a></h1><h2 id=介绍>介绍<a hidden class=anchor aria-hidden=true href=#介绍>#</a></h2><p>ffmpeg 是一款通用的媒体转换器。它能读取各种输入（包括实时抓取/录制设备），并将其过滤和转码为大量输出格式。</p><h2 id=转码程序工作图>转码程序工作图<a hidden class=anchor aria-hidden=true href=#转码程序工作图>#</a></h2><p><img loading=lazy src=../../img/posts/image-20240519170946267.png alt></p><ul><li>muxer：即多路复用器，主要用于将音频流、视频流、字幕流等不同的数据流进行混合，生成一个包含所有信息的单一数据流。如mp4等格式</li><li>demuxer：对视频进行解封装</li></ul><h2 id=工具>工具<a hidden class=anchor aria-hidden=true href=#工具>#</a></h2><ul><li>ffmpeg：主程序</li><li>ffplay：简单的音视频查看工具</li><li>ffprobe：查看音视频信息工具</li></ul><h2 id=示例>示例<a hidden class=anchor aria-hidden=true href=#示例>#</a></h2><ol><li>查看文件信息：<code>ffmpeg -i demo.mp4</code>或<code>ffprobe demo.mp4</code>，添加<code>-hide_banner</code>可以隐藏版本，配置参数等信息</li><li>转换文件格式：<code>ffmpeg -i demo.mp4 demo.mov</code></li><li>获取一张视频截图：<code>ffmpeg -i demo.mp4 -ss 00:00:01 -f image2 -vframes 1 out.jpg</code></li><li>视频添加水印：`ffmpeg -i demo.mp4 -i logo.png -filter_complex &ldquo;overlay=x:y out.mp4&rdquo;</li><li>视频去除水印：<code>ffmpeg -i demo.mp4 -vf "delogo=x=xxx:y=xxx:w=xxx:h=xxx:show=0" -c:a copy out.mp4</code></li><li>更改视频分辨率：<code>ffmpeg -i demo.mp4 -vf scale=-1:720</code></li><li>删除视频中的音频：<code>ffmpeg -i demo.mp4 -an out.mp4</code></li><li>视频转gif图：<code>ffmpeg -i demo.mp4 -ss 00:00:30 -t3 -vf "fps=24,scale=600:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" test.gif</code></li></ol><h2 id=参考>参考<a hidden class=anchor aria-hidden=true href=#参考>#</a></h2><p><a href=https://zhuanlan.zhihu.com/p/673522888>知乎：FFMPEG详解(完整版）</a><br><a href=https://www.bilibili.com/video/BV1bu4y1n78A/>B站：FFmpeg 速成教学</a><br><a href=https://blog.csdn.net/qq284489030/article/details/134683655>视频转gif图</a></p></div><footer class=post-footer><ul class=post-tags><li><a href=http://yysog.com/tags/tools/>Tools</a></li></ul><nav class=paginav><a class=next href=http://yysog.com/posts/linux%E7%BD%91%E6%A1%A5%E9%85%8D%E7%BD%AE/><span class=title>下一页 »</span><br><span>linux通过网桥将多网口主机当交换机</span></a></nav></footer></article></main><footer class=footer><span>&copy; 2024 <a href=http://yysog.com/>yysog's blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script><script>document.querySelectorAll("pre > code").forEach(e=>{const n=e.parentNode.parentNode,t=document.createElement("button");t.classList.add("copy-code"),t.innerHTML="复制";function s(){t.innerHTML="已复制！",setTimeout(()=>{t.innerHTML="复制"},2e3)}t.addEventListener("click",t=>{if("clipboard"in navigator){navigator.clipboard.writeText(e.textContent),s();return}const n=document.createRange();n.selectNodeContents(e);const o=window.getSelection();o.removeAllRanges(),o.addRange(n);try{document.execCommand("copy"),s()}catch{}o.removeRange(n)}),n.classList.contains("highlight")?n.appendChild(t):n.parentNode.firstChild==n||(e.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName=="TABLE"?e.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(t):e.parentNode.appendChild(t))})</script></body></html>
